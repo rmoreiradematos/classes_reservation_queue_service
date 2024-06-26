@@ -2,7 +2,8 @@ import { IRecurrenceDetails } from "../../application/interfaces/IRecurrence";
 
 export default class WeeklyRecurrence {
   room_id: number;
-  user_id: number;
+  user_id: string;
+  title: string;
   details: IRecurrenceDetails;
   start_date: Date;
   end_date: Date;
@@ -12,7 +13,8 @@ export default class WeeklyRecurrence {
 
   constructor(
     room_id: number,
-    user_id: number,
+    user_id: string,
+    title: string,
     details: IRecurrenceDetails,
     start_date: Date,
     end_date: Date,
@@ -22,6 +24,7 @@ export default class WeeklyRecurrence {
   ) {
     this.room_id = room_id;
     this.user_id = user_id;
+    this.title = title;
     this.details = details;
     this.start_date = start_date;
     this.end_date = new Date(end_date);
@@ -42,6 +45,11 @@ export default class WeeklyRecurrence {
       day.toLowerCase()
     );
     let currentDate = new Date(this.start_date);
+    currentDate.setMinutes(currentDate.getMinutes() + currentDate.getTimezoneOffset());
+
+    let endDate = new Date(this.end_date);
+    endDate.setMinutes(endDate.getMinutes() + endDate.getTimezoneOffset());
+
     console.log(
       this.start_date,
       this.end_date,
@@ -63,14 +71,15 @@ export default class WeeklyRecurrence {
         break;
     }
 
-    while (currentDate <= this.end_date) {
+    while (currentDate <= endDate) {
       const day = currentDate
         .toLocaleString("en-US", { weekday: "long" })
         .toLowerCase();
       if (daysOfWeek.includes(day)) {
         reservations.push({
+          title: this.title,
           classId: Number(this.room_id),
-          owner: Number(this.user_id),
+          owner: this.user_id,
           dateStart: new Date(
             currentDate.toISOString().split("T")[0] + "T" + this.hour_start
           ),

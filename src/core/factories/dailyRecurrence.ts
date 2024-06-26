@@ -2,31 +2,37 @@ import { IRecurrenceDetails } from "../../application/interfaces/IRecurrence";
 
 export default class DailyRecurrence {
   room_id: number;
-  user_id: number;
+  user_id: string;
+  title: string;
   details: IRecurrenceDetails;
   start_date: Date;
   end_date: Date;
   period?: string;
   hour_start?: string;
   hour_end?: string;
+  interval?: number;
   constructor(
     room_id: number,
-    user_id: number,
+    user_id: string,
+    title: string,
     details: IRecurrenceDetails,
     start_date: Date,
     end_date: Date,
     period?: string,
     hour_start?: string,
-    hour_end?: string
+    hour_end?: string,
+    interval?: number
   ) {
     this.room_id = room_id;
     this.user_id = user_id;
+    this.title = title;
     this.details = details;
     this.start_date = start_date;
     this.end_date = new Date(end_date);
     this.period = period;
     this.hour_start = hour_start;
     this.hour_end = hour_end;
+    this.interval = interval;
   }
 
   createReservations() {
@@ -50,8 +56,9 @@ export default class DailyRecurrence {
 
     while (currentDate <= this.end_date) {
       reservations.push({
+        title: this.title,
         class_id: Number(this.room_id),
-        user_id: Number(this.user_id),
+        owner: this.user_id,
         dateStart: new Date(
           currentDate.toISOString().split("T")[0] + "T" + this.hour_start
         ),
@@ -59,7 +66,7 @@ export default class DailyRecurrence {
           currentDate.toISOString().split("T")[0] + "T" + this.hour_end
         ),
       });
-      currentDate.setDate(currentDate.getDate() + 1);
+      currentDate.setDate(currentDate.getDate() + (this.interval || 1));
     }
 
     return reservations;

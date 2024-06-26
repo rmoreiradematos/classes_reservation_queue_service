@@ -1,4 +1,4 @@
-import amqp, { Connection, Channel, ConsumeMessage } from "amqplib";
+import amqp, { Channel, Connection, ConsumeMessage } from "amqplib";
 import dotenv from "dotenv";
 import RecurrenceFactory from "../../core/factories/recurrenceFactory";
 import { saveRecurringReservations } from "../db/persistReservations";
@@ -50,6 +50,7 @@ export class WorkerService {
     const {
       room_id,
       user_id,
+      title,
       recurrence,
       start_date,
       end_date,
@@ -62,6 +63,7 @@ export class WorkerService {
     const createdRecurrency = recurrenceFactory.createRecurrence(
       room_id,
       user_id,
+      title,
       start_date,
       end_date,
       { ...recurrence },
