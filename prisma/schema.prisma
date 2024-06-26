@@ -1,14 +1,55 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://user:password@localhost:5432/mydb"
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  status    String   @default("Ativo")
+  profile   String   @default("comum")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Class {
+  id            Int           @id @default(autoincrement())
+  name          String
+  floor          String
+  description   String?
+  reservations  Reservation[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reservation {
+  id           Int        @id @default(autoincrement())
+  title        String
+  owner        String
+  dateStart    DateTime
+  dateEnd      DateTime
+  classId      Int
+  observation  String?
+  isCompleted  Boolean    @default(false)
+  previousId   Int?       @map("previous")
+  nextId       Int?       @map("next")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  class        Class      @relation(fields: [classId], references: [id])
+  previous     Reservation? @relation("ReservationPrevious", fields: [previousId], references: [id])
+  next         Reservation? @relation("ReservationNext", fields: [nextId], references: [id])
+  previousReservations Reservation[] @relation("ReservationPrevious")
+  nextReservations Reservation[] @relation("ReservationNext")
+}
+
+model Notification {
+  id          Int        @id @default(autoincrement())
+  unread      Boolean    @default(true)
+  action      Json      @default("{}")
 }
