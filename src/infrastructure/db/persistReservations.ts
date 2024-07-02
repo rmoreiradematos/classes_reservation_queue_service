@@ -11,8 +11,8 @@ export const saveRecurringReservations = async (reservations: any) => {
     console.log("asdfasfsa");
     const reservation: any = await prisma.reservation.create({
       data: {
-        title: "Recurring Reservation",
-        owner: reservationData.owner.toString(),
+        title: reservationData.title ?? "Recurring reservation",
+        owner: reservationData.owner,
         dateStart: reservationData.dateStart,
         dateEnd: reservationData.dateEnd,
         classId: 1,
